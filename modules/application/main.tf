@@ -30,8 +30,8 @@ resource "aws_launch_template" "main" {
 
   user_data = base64encode(<<-EOF
     #!/bin/bash
-    yum update -y
-    yum install -y httpd
+    dnf update -y
+    dnf install -y httpd
     systemctl enable httpd
     systemctl start httpd
 
@@ -39,10 +39,10 @@ resource "aws_launch_template" "main" {
 
     TOKEN=$(curl -s -X PUT "http://169.254.169.254/latest/api/token" \
       -H "X-aws-ec2-metadata-token-ttl-seconds: 21600")
-    COMPUTE_INSTANCE_ID=$(curl -s -H "X-aws-ec2-metadata-token: $TOKEN" \
+    COMPUTE_INSTANCE_ID=$(curl -s -H "X-aws-ec2-metadata-token: $$TOKEN" \
       http://169.254.169.254/latest/meta-data/instance-id)
 
-    echo "This message was generated on instance $COMPUTE_INSTANCE_ID with the following UUID $COMPUTE_MACHINE_UUID" \
+    echo "This message was generated on instance $$COMPUTE_INSTANCE_ID with the following UUID $$COMPUTE_MACHINE_UUID" \
       > /var/www/html/index.html
   EOF
   )
